@@ -1,12 +1,19 @@
-app:
-    build: .
-    environment:
-        REALM: prod
-        REDIS_URL: "//redis:6379"
-    links:
-        - redis
-    ports:
-        - "8000:8000"
+version: "3"
 
-redis:
-    image: redis
+services:
+    app:
+        build: .
+        restart: always
+        environment:
+            REALM: prod
+            GUNICORN_CMD_ARGS: "--log-level debug --error-logfile '-' --access-logfile '-'"
+            REDIS_URL: "//redis:6379"
+            SESSION_SECRET_KEY: "${SESSION_SECRET_KEY:?specify SESSION_SECRET_KEY in .env file}"
+        links:
+            - redis
+        ports:
+            - "8000:8000"
+
+    redis:
+        image: redis
+        restart: always
